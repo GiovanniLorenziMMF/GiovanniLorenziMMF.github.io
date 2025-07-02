@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Energia Salto in Alto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the high jump bar visualization */
+        body {
+            font-family: "Helvetica Neue Std", Helvetica, Arial, sans-serif; /* Changed to Helvetica Neue Std */
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .bar-container {
+            position: relative;
+            width: 100px; /* Fixed width for the bar container */
+            height: 300px; /* Fixed height for the bar container */
+            background-color: #e2e8f0; /* Light gray for the meter background */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .bar {
+            position: absolute;
+            width: 80%;
+            height: 8px; /* Thickness of the bar */
+            background-color: #f56565; /* Red-orange color for the bar */
+            left: 10%;
+            border-radius: 4px;
+            bottom: 0; /* Initial position at the bottom */
+            transition: bottom 0.5s ease-out; /* Smooth transition for bar movement */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .meter-line {
+            position: absolute;
+            left: 5px; /* Position meter lines on the left */
+            width: 6px;
+            background-color: #cbd5e0; /* Gray for meter lines */
+        }
+        .meter-label {
+            position: absolute;
+            left: 15px; /* Position meter labels next to lines */
+            font-size: 0.75rem;
+            color: #4a5568; /* Dark gray for text */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full transform transition-all duration-300 hover:scale-105">
+        <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-6">
+            Calcolatore Energia Salto in Alto
+        </h1>
+
+        <div class="flex flex-col md:flex-row gap-8 items-center justify-center">
+            <div class="flex-grow space-y-5 w-full">
+                <div>
+                    <label for="weight" class="block text-gray-700 text-sm font-medium mb-2">
+                        Peso (kg):
+                    </label>
+                    <input
+                        type="number"
+                        id="weight"
+                        placeholder="Es. 70"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        value="70"
+                        min="1"
+                    />
+                </div>
+
+                <div>
+                    <label for="height" class="block text-gray-700 text-sm font-medium mb-2">
+                        Altezza raggiunta (m):
+                    </label>
+                    <input
+                        type="number"
+                        id="height"
+                        placeholder="Es. 0.5"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        value="0.5"
+                        min="0"
+                        step="0.01"
+                    />
+                </div>
+
+                <button
+                    id="calculateBtn"
+                    class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:-translate-y-0.5 shadow-lg"
+                >
+                    Calcola Energia
+                </button>
+
+                <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="bg-blue-50 p-4 rounded-lg text-center text-blue-800 shadow-md">
+                        <p class="text-sm font-medium">Energia potenziale:</p>
+                        <p id="potentialEnergyResult" class="text-xl font-bold">0.00 Joule</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg text-center text-green-800 shadow-md">
+                        <p class="text-sm font-medium">Calorie chimiche espresse:</p>
+                        <p id="chemicalEnergyResult" class="text-xl font-bold">0.00 kcal</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg text-center text-purple-800 shadow-md col-span-1 md:col-span-2">
+                        <p class="text-sm font-medium">Salti per bruciare una pizza Margherita (790 kcal):</p>
+                        <p id="jumpsForPizzaResult" class="text-xl font-bold">0</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg text-center text-yellow-800 shadow-md col-span-1 md:col-span-2">
+                        <p class="text-sm font-medium">Il Sole irradia la stessa energia (di un singolo salto) in 1 mq del giardino del MUSE in:</p>
+                        <p id="solarEnergyTimeResult" class="text-xl font-bold">0.00 secondi</p>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-600 text-center mt-4">
+                    *Il calcolo delle calorie chimiche si basa su un'efficienza del corpo umano del 25%.
+                    <br>
+                    **Il calcolo dell'irradiazione solare si basa su una giornata limpida di novembre con una potenza media di 807.77 W/mq.
+                </p>
+
+                <div id="messageBox" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                        <p id="messageText" class="text-gray-800 font-semibold mb-4"></p>
+                        <button id="closeMessageBox" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200">
+                            Chiudi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bar-container relative flex-shrink-0 mt-8 md:mt-0">
+                <div class="meter-line" style="bottom: 0px; height: 1px; width: 100%;"></div>
+                <div class="meter-line" style="bottom: 50px; height: 2px;"></div>
+                <div class="meter-line" style="bottom: 100px; height: 3px;"></div>
+                <div class="meter-line" style="bottom: 150px; height: 4px;"></div>
+                <div class="meter-line" style="bottom: 200px; height: 5px;"></div>
+                <div class="meter-line" style="bottom: 250px; height: 6px;"></div>
+
+                <div class="meter-label" style="bottom: -5px;">0m</div>
+                <div class="meter-label" style="bottom: 45px;">0.5m</div>
+                <div class="meter-label" style="bottom: 95px;">1m</div>
+                <div class="meter-label" style="bottom: 145px;">1.5m</div>
+                <div class="meter-label" style="bottom: 195px;">2m</div>
+                <div class="meter-label" style="bottom: 245px;">2.5m</div>
+
+                <div id="highJumpBar" class="bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const weightInput = document.getElementById('weight');
+        const heightInput = document.getElementById('height');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const potentialEnergyResultDiv = document.getElementById('potentialEnergyResult');
+        const chemicalEnergyResultDiv = document.getElementById('chemicalEnergyResult');
+        const jumpsForPizzaResultDiv = document.getElementById('jumpsForPizzaResult');
+        const solarEnergyTimeResultDiv = document.getElementById('solarEnergyTimeResult');
+        const highJumpBar = document.getElementById('highJumpBar');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const closeMessageBoxBtn = document.getElementById('closeMessageBox');
+
+        // Gravitational acceleration constant (m/s^2)
+        const g = 9.81;
+        // Human body efficiency
+        const efficiency = 0.25; // 25%
+        // Calories in a Margherita pizza
+        const pizzaKcal = 790;
+        // Conversion factor from Joules to calories (1 Joule = 0.239006 calories)
+        const JOULE_TO_CALORIE = 0.239006;
+        // Conversion factor from calories to kilocalories
+        const CALORIE_TO_KCAL = 1000;
+
+        // Solar irradiation data for MUSE garden in November (limpid day)
+        // Potenza media del Sole in una giornata di cielo limpido a novembre (W/mq = J/s/mq)
+        const averageSolarPowerClearDayNovember = 807.77; // Watts per square meter
+
+        /**
+         * Shows a custom message box with the given message.
+         * @param {string} message - The message to display.
+         */
+        function showMessageBox(message) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the custom message box.
+         */
+        function hideMessageBox() {
+            messageBox.classList.add('hidden');
+        }
+
+        // Function to reset result displays
+        function resetResults() {
+            potentialEnergyResultDiv.textContent = "0.00 Joule";
+            chemicalEnergyResultDiv.textContent = "0.00 kcal";
+            jumpsForPizzaResultDiv.textContent = "0";
+            solarEnergyTimeResultDiv.textContent = "0.00 secondi";
+        }
+
+        // Event listener for the calculate button
+        calculateBtn.addEventListener('click', () => {
+            const weight = parseFloat(weightInput.value);
+            const height = parseFloat(heightInput.value);
+
+            // Validate inputs
+            if (isNaN(weight) || isNaN(height) || weight <= 0 || height < 0) {
+                showMessageBox("Per favore, inserisci valori validi e positivi per il peso e non negativi per l'altezza.");
+                resetResults(); // Reset results
+                // Reset bar position if invalid input
+                highJumpBar.style.bottom = '0px';
+                return;
+            }
+
+            // Calculate Potential Energy (PE = m * g * h)
+            const potentialEnergy = weight * g * height; // Joules
+
+            // Calculate chemical energy expressed (considering efficiency)
+            const chemicalEnergyJoules = potentialEnergy / efficiency; // Joules
+            const chemicalEnergyCalories = chemicalEnergyJoules * JOULE_TO_CALORIE; // calories
+            const chemicalEnergyKcal = chemicalEnergyCalories / CALORIE_TO_KCAL; // kcal
+
+            // Calculate number of jumps to consume a pizza
+            const jumpsForPizza = pizzaKcal / chemicalEnergyKcal;
+
+            // Calculate time for solar energy to match chemical energy
+            let timeForSolarEnergySeconds = 0;
+            // Il calcolo corretto è energia (Joule) diviso potenza (Watt o Joule/secondo)
+            if (averageSolarPowerClearDayNovember > 0) {
+                timeForSolarEnergySeconds = chemicalEnergyJoules / averageSolarPowerClearDayNovember;
+            } else {
+                timeForSolarEnergySeconds = Infinity; // Avoid division by zero, indicate infinite time
+            }
+
+
+            // Display the results, formatted to 2 decimal places
+            potentialEnergyResultDiv.textContent = `${potentialEnergy.toFixed(2)} Joule`;
+            chemicalEnergyResultDiv.textContent = `${chemicalEnergyKcal.toFixed(2)} kcal`;
+            jumpsForPizzaResultDiv.textContent = `${Math.ceil(jumpsForPizza)}`;
+            solarEnergyTimeResultDiv.textContent = `${timeForSolarEnergySeconds.toFixed(2)} secondi`;
+
+            // Update the bar position based on height
+            // The bar container is 300px tall, representing a max height (e.g., 3 meters for visualization).
+            // We'll scale the input height to fit this visual. Max bar height for visualization is 2.5m (250px).
+            const maxVisualHeight = 2.5; // meters
+            const containerHeightPx = 250; // Max height in pixels for the bar to move within the meter scale
+            let barPositionPx = (height / maxVisualHeight) * containerHeightPx;
+
+            // Cap the bar position at the maximum visual height
+            if (barPositionPx > containerHeightPx) {
+                barPositionPx = containerHeightPx;
+                showMessageBox(`L'altezza inserita (${height}m) supera la visualizzazione massima (2.5m) ma il calcolo è corretto.`);
+            }
+
+            highJumpBar.style.bottom = `${barPositionPx}px`;
+        });
+
+        // Event listener to close the message box
+        closeMessageBoxBtn.addEventListener('click', hideMessageBox);
+
+        // Initial update of the bar position based on default height
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialHeight = parseFloat(heightInput.value);
+            const maxVisualHeight = 2.5; // meters
+            const containerHeightPx = 250; // Max height in pixels for the bar to move within the meter scale
+            let barPositionPx = (initialHeight / maxVisualHeight) * containerHeightPx;
+
+            if (barPositionPx > containerHeightPx) {
+                barPositionPx = containerHeightPx;
+            }
+            highJumpBar.style.bottom = `${barPositionPx}px`;
+        });
+
+    </script>
+</body>
+</html>
