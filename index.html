@@ -8,14 +8,14 @@
     <style>
         /* Custom styles for the high jump bar visualization */
         body {
-            font-family: "Helvetica Neue Std", Helvetica, Arial, sans-serif; /* Changed to Helvetica Neue Std */
-            background-color: #f0f4f8; /* Light blue-gray background */
+            font-family: "Helvetica Neue Std", Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
         }
         .bar-container {
             position: relative;
-            width: 100px; /* Fixed width for the bar container */
-            height: 300px; /* Fixed height for the bar container */
-            background-color: #e2e8f0; /* Light gray for the meter background */
+            width: 100px;
+            height: 250px; /* Reduced height to represent max 2m */
+            background-color: #e2e8f0;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
@@ -23,25 +23,25 @@
         .bar {
             position: absolute;
             width: 80%;
-            height: 8px; /* Thickness of the bar */
-            background-color: #f56565; /* Red-orange color for the bar */
+            height: 8px;
+            background-color: #f56565;
             left: 10%;
             border-radius: 4px;
-            bottom: 0; /* Initial position at the bottom */
-            transition: bottom 0.5s ease-out; /* Smooth transition for bar movement */
+            bottom: 0;
+            transition: bottom 0.5s ease-out;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .meter-line {
             position: absolute;
-            left: 5px; /* Position meter lines on the left */
+            left: 5px;
             width: 6px;
-            background-color: #cbd5e0; /* Gray for meter lines */
+            background-color: #cbd5e0;
         }
         .meter-label {
             position: absolute;
-            left: 15px; /* Position meter labels next to lines */
+            left: 15px;
             font-size: 0.75rem;
-            color: #4a5568; /* Dark gray for text */
+            color: #4a5568;
         }
     </style>
 </head>
@@ -102,16 +102,18 @@
                         <p class="text-sm font-medium">Salti per bruciare una pizza Margherita (790 kcal):</p>
                         <p id="jumpsForPizzaResult" class="text-xl font-bold">0</p>
                     </div>
-                    <div class="bg-yellow-50 p-4 rounded-lg text-center text-yellow-800 shadow-md col-span-1 md:col-span-2">
-                        <p class="text-sm font-medium">Il Sole irradia la stessa energia (di un singolo salto) in 1 mq del giardino del MUSE in:</p>
-                        <p id="solarEnergyTimeResult" class="text-xl font-bold">0.00 secondi</p>
+                    <div class="bg-indigo-50 p-4 rounded-lg text-center text-indigo-800 shadow-md col-span-1 md:col-span-2">
+                        <p class="text-sm font-medium">Salti per eguagliare l'energia solare di un giorno di ottobre:</p>
+                        <p id="jumpsForSolarEnergyResult" class="text-xl font-bold">0</p>
                     </div>
                 </div>
 
                 <p class="text-sm text-gray-600 text-center mt-4">
                     *Il calcolo delle calorie chimiche si basa su un'efficienza del corpo umano del 25%.
                     <br>
-                    **Il calcolo dell'irradiazione solare si basa su una giornata limpida di novembre con una potenza media di 807.77 W/mq.
+                    **Il calcolo dell'irradiazione solare a ottobre si basa su un'energia totale di <strong>13.006.800 J/mq</strong> al giorno, calcolata nel giardino del MUSE.
+                    <br>
+                    ***Il paragone con il Sole si basa sull'energia meccanica del salto, non sull'energia chimica bruciata.
                 </p>
 
                 <div id="messageBox" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
@@ -126,18 +128,16 @@
 
             <div class="bar-container relative flex-shrink-0 mt-8 md:mt-0">
                 <div class="meter-line" style="bottom: 0px; height: 1px; width: 100%;"></div>
-                <div class="meter-line" style="bottom: 50px; height: 2px;"></div>
-                <div class="meter-line" style="bottom: 100px; height: 3px;"></div>
-                <div class="meter-line" style="bottom: 150px; height: 4px;"></div>
-                <div class="meter-line" style="bottom: 200px; height: 5px;"></div>
-                <div class="meter-line" style="bottom: 250px; height: 6px;"></div>
+                <div class="meter-line" style="bottom: 62.5px; height: 2px;"></div>
+                <div class="meter-line" style="bottom: 125px; height: 3px;"></div>
+                <div class="meter-line" style="bottom: 187.5px; height: 4px;"></div>
+                <div class="meter-line" style="bottom: 249px; height: 5px;"></div>
 
                 <div class="meter-label" style="bottom: -5px;">0m</div>
-                <div class="meter-label" style="bottom: 45px;">0.5m</div>
-                <div class="meter-label" style="bottom: 95px;">1m</div>
-                <div class="meter-label" style="bottom: 145px;">1.5m</div>
-                <div class="meter-label" style="bottom: 195px;">2m</div>
-                <div class="meter-label" style="bottom: 245px;">2.5m</div>
+                <div class="meter-label" style="bottom: 57.5px;">0.5m</div>
+                <div class="meter-label" style="bottom: 120px;">1m</div>
+                <div class="meter-label" style="bottom: 182.5px;">1.5m</div>
+                <div class="meter-label" style="bottom: 244px;">2m</div>
 
                 <div id="highJumpBar" class="bar"></div>
             </div>
@@ -152,7 +152,7 @@
         const potentialEnergyResultDiv = document.getElementById('potentialEnergyResult');
         const chemicalEnergyResultDiv = document.getElementById('chemicalEnergyResult');
         const jumpsForPizzaResultDiv = document.getElementById('jumpsForPizzaResult');
-        const solarEnergyTimeResultDiv = document.getElementById('solarEnergyTimeResult');
+        const jumpsForSolarEnergyResultDiv = document.getElementById('jumpsForSolarEnergyResult');
         const highJumpBar = document.getElementById('highJumpBar');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
@@ -169,9 +169,12 @@
         // Conversion factor from calories to kilocalories
         const CALORIE_TO_KCAL = 1000;
 
-        // Solar irradiation data for MUSE garden in November (limpid day)
-        // Potenza media del Sole in una giornata di cielo limpido a novembre (W/mq = J/s/mq)
-        const averageSolarPowerClearDayNovember = 807.77; // Watts per square meter
+        // Solar irradiation data
+        // Energia solare totale in una giornata di ottobre
+        const totalSolarEnergyOctoberJoulePerSqMeter = 13006800; // J in 1 mq al giorno
+
+        // Max height for visualization and calculation
+        const maxVisualHeight = 2.0; // meters
 
         /**
          * Shows a custom message box with the given message.
@@ -194,7 +197,7 @@
             potentialEnergyResultDiv.textContent = "0.00 Joule";
             chemicalEnergyResultDiv.textContent = "0.00 kcal";
             jumpsForPizzaResultDiv.textContent = "0";
-            solarEnergyTimeResultDiv.textContent = "0.00 secondi";
+            jumpsForSolarEnergyResultDiv.textContent = "0";
         }
 
         // Event listener for the calculate button
@@ -205,50 +208,45 @@
             // Validate inputs
             if (isNaN(weight) || isNaN(height) || weight <= 0 || height < 0) {
                 showMessageBox("Per favore, inserisci valori validi e positivi per il peso e non negativi per l'altezza.");
-                resetResults(); // Reset results
-                // Reset bar position if invalid input
+                resetResults();
                 highJumpBar.style.bottom = '0px';
                 return;
             }
 
             // Calculate Potential Energy (PE = m * g * h)
-            const potentialEnergy = weight * g * height; // Joules
+            const potentialEnergy = weight * g * height; // Joules (Energia Meccanica)
 
             // Calculate chemical energy expressed (considering efficiency)
-            const chemicalEnergyJoules = potentialEnergy / efficiency; // Joules
+            const chemicalEnergyJoules = potentialEnergy / efficiency; // Joules (Energia Chimica)
             const chemicalEnergyCalories = chemicalEnergyJoules * JOULE_TO_CALORIE; // calories
             const chemicalEnergyKcal = chemicalEnergyCalories / CALORIE_TO_KCAL; // kcal
 
             // Calculate number of jumps to consume a pizza
             const jumpsForPizza = pizzaKcal / chemicalEnergyKcal;
 
-            // Calculate time for solar energy to match chemical energy
-            let timeForSolarEnergySeconds = 0;
-            // Il calcolo corretto è energia (Joule) diviso potenza (Watt o Joule/secondo)
-            if (averageSolarPowerClearDayNovember > 0) {
-                timeForSolarEnergySeconds = chemicalEnergyJoules / averageSolarPowerClearDayNovember;
+            // Calculate number of jumps to match a full day's worth of solar energy in October
+            let jumpsForSolarEnergy = 0;
+            // The comparison is now between Solar Energy (total) and Potential Energy (per jump)
+            if (potentialEnergy > 0) {
+                jumpsForSolarEnergy = totalSolarEnergyOctoberJoulePerSqMeter / potentialEnergy;
             } else {
-                timeForSolarEnergySeconds = Infinity; // Avoid division by zero, indicate infinite time
+                jumpsForSolarEnergy = Infinity;
             }
-
 
             // Display the results, formatted to 2 decimal places
             potentialEnergyResultDiv.textContent = `${potentialEnergy.toFixed(2)} Joule`;
             chemicalEnergyResultDiv.textContent = `${chemicalEnergyKcal.toFixed(2)} kcal`;
             jumpsForPizzaResultDiv.textContent = `${Math.ceil(jumpsForPizza)}`;
-            solarEnergyTimeResultDiv.textContent = `${timeForSolarEnergySeconds.toFixed(2)} secondi`;
+            jumpsForSolarEnergyResultDiv.textContent = `${Math.ceil(jumpsForSolarEnergy)}`;
 
-            // Update the bar position based on height
-            // The bar container is 300px tall, representing a max height (e.g., 3 meters for visualization).
-            // We'll scale the input height to fit this visual. Max bar height for visualization is 2.5m (250px).
-            const maxVisualHeight = 2.5; // meters
-            const containerHeightPx = 250; // Max height in pixels for the bar to move within the meter scale
+            // Update the bar position based on height (max 2m)
+            const containerHeightPx = 250;
             let barPositionPx = (height / maxVisualHeight) * containerHeightPx;
 
             // Cap the bar position at the maximum visual height
             if (barPositionPx > containerHeightPx) {
                 barPositionPx = containerHeightPx;
-                showMessageBox(`L'altezza inserita (${height}m) supera la visualizzazione massima (2.5m) ma il calcolo è corretto.`);
+                showMessageBox(`L'altezza inserita (${height}m) supera la visualizzazione massima (2.0m) ma il calcolo è corretto.`);
             }
 
             highJumpBar.style.bottom = `${barPositionPx}px`;
@@ -260,8 +258,7 @@
         // Initial update of the bar position based on default height
         document.addEventListener('DOMContentLoaded', () => {
             const initialHeight = parseFloat(heightInput.value);
-            const maxVisualHeight = 2.5; // meters
-            const containerHeightPx = 250; // Max height in pixels for the bar to move within the meter scale
+            const containerHeightPx = 250;
             let barPositionPx = (initialHeight / maxVisualHeight) * containerHeightPx;
 
             if (barPositionPx > containerHeightPx) {
@@ -269,7 +266,6 @@
             }
             highJumpBar.style.bottom = `${barPositionPx}px`;
         });
-
     </script>
 </body>
 </html>
