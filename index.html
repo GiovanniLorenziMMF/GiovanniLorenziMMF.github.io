@@ -3,278 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolatore Energia Salto in Alto</title>
+    <title>Salto & Calorie - Oltre il Traguardo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Definizione Variabili Globali CSS (per colori sicuri e riutilizzabili) */
         :root {
             --accent-orange: #f47e11;
             --text-dark-blue: #005691;
-            --box-light-blue: #f0f8ff; /* Azzurrino chiaro (AliceBlue) */
+            --box-light-blue: #f0f8ff;
         }
-
-        /* Stili Custom per il Colore del Testo nei Box dei Risultati */
-        .result-text {
-            color: var(--text-dark-blue);
-        }
-
-        /* Sfondo Box Risultati */
-        .box-bg-color {
-            background-color: var(--box-light-blue);
-        }
-
-        /* Stile Bottone Calcola: Grigio di default, Arancione su hover */
+        .result-text { color: var(--text-dark-blue); }
+        .box-bg-color { background-color: var(--box-light-blue); }
         .calculate-btn {
             background-color: var(--accent-orange);
             color: white;
-            border: 2px solid #d1d5db; /* border-gray-300 */
             transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
         .calculate-btn:hover {
-            background-color: var(--accent-orange);
-            color: white;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
-        
-        /* Stile Bottone Chiudi/Altro Bottone Arancione (fisso) */
-        .orange-btn-fixed {
-            background-color: var(--accent-orange);
-            color: white;
-            transition: background-color 0.2s;
-        }
-        .orange-btn-fixed:hover {
-            background-color: #e06c00; /* Tonalità di arancione più scura per l'hover */
-        }
-
-        /* Custom styles for the high jump bar visualization */
-        body {
-            font-family: "Helvetica Neue Std", Helvetica, Arial, sans-serif;
-            background-color: #f0f4f8;
-        }
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; background-color: #f0f4f8; }
         .bar-container {
-            position: relative;
-            width: 100px;
-            height: 250px;
-            background-color: #e2e8f0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            position: relative; width: 60px; height: 300px;
+            background-color: #e2e8f0; border-radius: 8px; overflow: hidden;
         }
         .bar {
-            position: absolute;
-            width: 80%;
-            height: 8px;
-            background-color: var(--accent-orange); /* ARANCIONE per la barra del salto */
-            left: 10%;
-            border-radius: 4px;
-            bottom: 0;
+            position: absolute; width: 100%; height: 6px;
+            background-color: var(--accent-orange); bottom: 0;
             transition: bottom 0.5s ease-out;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .meter-line {
-            position: absolute;
-            left: 5px;
-            width: 6px;
-            background-color: #cbd5e0;
-        }
-        .meter-label {
-            position: absolute;
-            left: 15px;
-            font-size: 0.75rem;
-            color: #4a5568;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full transform transition-all duration-300 hover:scale-105">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full">
         <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-6">
-            Calcolatore Energia Salto in Alto
+            Brucia la tua colazione! 🥐
         </h1>
 
-        <div class="flex flex-col md:flex-row gap-8 items-center justify-center">
-            <div class="flex-grow space-y-5 w-full">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="md:col-span-2 space-y-4">
                 <div>
-                    <label for="weight" class="block text-gray-700 text-sm font-medium mb-2">
-                        Peso (kg):
-                    </label>
-                    <input
-                        type="number"
-                        id="weight"
-                        placeholder="Es. 70"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        value="70"
-                        min="1"
-                    />
+                    <label class="block text-gray-700 text-sm font-bold mb-1">Calorie Pasto (kcal):</label>
+                    <input type="number" id="mealKcal" value="350" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500">
                 </div>
-
-                <div>
-                    <label for="height" class="block text-gray-700 text-sm font-medium mb-2">
-                        Altezza raggiunta (m):
-                    </label>
-                    <input
-                        type="number"
-                        id="height"
-                        placeholder="Es. 0.5"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        value="0.5"
-                        min="0"
-                        step="0.01"
-                    />
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1">Tuo Peso (kg):</label>
+                        <input type="number" id="weight" value="80" class="w-full p-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1">Altezza Salto (m):</label>
+                        <input type="number" id="height" value="0.30" step="0.05" class="w-full p-2 border rounded-lg">
+                    </div>
                 </div>
-
-                <button
-                    id="calculateBtn"
-                    class="calculate-btn w-full p-3 rounded-lg font-semibold focus:outline-none focus:ring-4 focus:ring-orange-300"
-                >
-                    Calcola Energia
+                <button id="calculateBtn" class="calculate-btn w-full p-3 rounded-lg font-bold text-lg mt-2">
+                    CALCOLA SALTI 🚀
                 </button>
-
-                <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="box-bg-color p-4 rounded-lg text-center result-text shadow-md">
-                        <p class="text-sm font-medium">Energia potenziale:</p>
-                        <p id="potentialEnergyResult" class="text-xl font-bold">0.00 Joule</p>
-                    </div>
-                    <div class="box-bg-color p-4 rounded-lg text-center result-text shadow-md">
-                        <p class="text-sm font-medium">Calorie chimiche consumate:</p>
-                        <p id="chemicalEnergyResult" class="text-xl font-bold">0.00 kcal</p>
-                    </div>
-                    
-                    <div class="box-bg-color p-4 rounded-lg text-center result-text shadow-md">
-                        <p class="text-sm font-medium">Salti per bruciare una pizza Margherita (790 kcal):</p>
-                        <p id="jumpsForPizzaResult" class="text-xl font-bold">0</p>
-                    </div>
-                    <div class="box-bg-color p-4 rounded-lg text-center result-text shadow-md">
-                        <p class="text-sm font-medium">Salti per eguagliare l'energia solare di un giorno di ottobre:</p>
-                        <p id="jumpsForSolarEnergyResult" class="text-xl font-bold">0</p>
-                    </div>
-                </div>
-
-                <p class="text-sm text-gray-600 text-center mt-4">
-                    *Il calcolo delle calorie chimiche si basa su un'efficienza del corpo umano del 25%.
-                    <br>
-                    **Il calcolo dell'irradiazione solare a ottobre si basa su un'energia totale di <strong>13.006.800 J/mq</strong> al giorno, calcolata nel giardino del MUSE.
-                    <br>
-                    ***Il paragone con il Sole si basa sull'energia meccanica del salto, non sull'energia chimica bruciata.
-                </p>
-
-                <div id="messageBox" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-                    <div class="bg-white p-6 rounded-lg shadow-xl text-center">
-                        <p id="messageText" class="text-gray-800 font-semibold mb-4"></p>
-                        <button id="closeMessageBox" class="orange-btn-fixed px-4 py-2 rounded-lg transition duration-200">
-                            Chiudi
-                        </button>
-                    </div>
-                </div>
             </div>
 
-            <div class="bar-container relative flex-shrink-0 mt-8 md:mt-0">
-                <div class="meter-line" style="bottom: 0px; height: 1px; width: 100%;"></div>
-                <div class="meter-line" style="bottom: 62.5px; height: 2px;"></div>
-                <div class="meter-line" style="bottom: 125px; height: 3px;"></div>
-                <div class="meter-line" style="bottom: 187.5px; height: 4px;"></div>
-                <div class="meter-line" style="bottom: 249px; height: 5px;"></div>
-
-                <div class="meter-label" style="bottom: -5px;">0m</div>
-                <div class="meter-label" style="bottom: 57.5px;">0.5m</div>
-                <div class="meter-label" style="bottom: 120px;">1m</div>
-                <div class="meter-label" style="bottom: 182.5px;">1.5m</div>
-                <div class="meter-label" style="bottom: 244px;">2m</div>
-
-                <div id="highJumpBar" class="bar"></div>
+            <div class="flex flex-col items-center justify-center">
+                <div class="bar-container">
+                    <div id="highJumpBar" class="bar"></div>
+                </div>
+                <p class="text-xs mt-2 font-bold text-gray-500">Target Salto</p>
             </div>
         </div>
+
+        <div id="resultsContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="box-bg-color p-4 rounded-lg text-center shadow-inner border border-blue-100">
+                <p class="text-xs font-bold uppercase text-gray-500 mb-2">Fisica Pura (100%)</p>
+                <p id="jumps100" class="text-2xl font-black result-text">0</p>
+                <p class="text-[10px] mt-1 text-gray-400">Se fossi una macchina perfetta</p>
+            </div>
+            <div class="box-bg-color p-4 rounded-lg text-center shadow-md border-2 border-orange-200">
+                <p class="text-xs font-bold uppercase text-orange-600 mb-2">Realtà Biologica (25%)</p>
+                <p id="jumps25" class="text-2xl font-black text-orange-700">0</p>
+                <p class="text-[10px] mt-1 text-gray-400">Contando lo spreco di calore</p>
+            </div>
+            <div class="bg-orange-100 p-4 rounded-lg text-center shadow-lg border-2 border-orange-500">
+                <p class="text-xs font-bold uppercase text-orange-800 mb-2">Effetto Metabolico ✨</p>
+                <p id="jumpsReal" class="text-2xl font-black text-orange-900">0</p>
+                <p class="text-[10px] mt-1 text-orange-700 font-medium">Contando il Metabolismo Basale</p>
+            </div>
+        </div>
+
+        <p class="text-[11px] text-gray-500 mt-6 italic">
+            * Nota scientifica: Il calcolo "Realissimo" stima il Metabolismo Basale basato sul peso e ipotizza un ritmo di 1 salto ogni 4 secondi. Più tempo ci metti, meno salti dovrai fare perché il tuo corpo brucia energia anche solo per restare vivo!
+        </p>
     </div>
 
     <script>
-        const weightInput = document.getElementById('weight');
-        const heightInput = document.getElementById('height');
         const calculateBtn = document.getElementById('calculateBtn');
-        const potentialEnergyResultDiv = document.getElementById('potentialEnergyResult');
-        const chemicalEnergyResultDiv = document.getElementById('chemicalEnergyResult');
-        const jumpsForPizzaResultDiv = document.getElementById('jumpsForPizzaResult');
-        const jumpsForSolarEnergyResultDiv = document.getElementById('jumpsForSolarEnergyResult');
         const highJumpBar = document.getElementById('highJumpBar');
-        const messageBox = document.getElementById('messageBox');
-        const messageText = document.getElementById('messageText');
-        const closeMessageBoxBtn = document.getElementById('closeMessageBox');
-
-        const g = 9.81;
-        const efficiency = 0.25;
-        const pizzaKcal = 790;
-        const JOULE_TO_CALORIE = 0.239006;
-        const CALORIE_TO_KCAL = 1000;
-        const totalSolarEnergyOctoberJoulePerSqMeter = 13006800;
-        const maxVisualHeight = 2.0;
-
-        function showMessageBox(message) {
-            messageText.textContent = message;
-            messageBox.classList.remove('hidden');
-        }
-
-        function hideMessageBox() {
-            messageBox.classList.add('hidden');
-        }
-
-        function resetResults() {
-            potentialEnergyResultDiv.textContent = "0.00 Joule";
-            chemicalEnergyResultDiv.textContent = "0.00 kcal";
-            jumpsForPizzaResultDiv.textContent = "0";
-            jumpsForSolarEnergyResultDiv.textContent = "0";
-        }
 
         calculateBtn.addEventListener('click', () => {
-            const weight = parseFloat(weightInput.value);
-            const height = parseFloat(heightInput.value);
+            const mealKcal = parseFloat(document.getElementById('mealKcal').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            
+            if (mealKcal <= 0 || weight <= 0 || height <= 0) return;
 
-            if (isNaN(weight) || isNaN(height) || weight <= 0 || height < 0) {
-                showMessageBox("Per favore, inserisci valori validi e positivi per il peso e non negativi per l'altezza.");
-                resetResults();
-                highJumpBar.style.bottom = '0px';
-                return;
-            }
+            // 1. Energia Meccanica per singolo salto (Joule)
+            const g = 9.81;
+            const energyMeccanicaJoule = weight * g * height;
+            
+            // Converti Joule in kcal (1 kcal = 4184 Joule)
+            const energyMeccanicaKcal = energyMeccanicaJoule / 4184;
 
-            const potentialEnergy = weight * g * height;
-            const chemicalEnergyJoules = potentialEnergy / efficiency;
-            const chemicalEnergyCalories = chemicalEnergyJoules * JOULE_TO_CALORIE;
-            const chemicalEnergyKcal = chemicalEnergyCalories / CALORIE_TO_KCAL;
-            const jumpsForPizza = pizzaKcal / chemicalEnergyKcal;
+            // 2. Scenario 100% Efficienza
+            const jumps100 = mealKcal / energyMeccanicaKcal;
 
-            let jumpsForSolarEnergy = 0;
-            if (potentialEnergy > 0) {
-                jumpsForSolarEnergy = totalSolarEnergyOctoberJoulePerSqMeter / potentialEnergy;
-            } else {
-                jumpsForSolarEnergy = Infinity;
-            }
+            // 3. Scenario 25% Efficienza (Realtà)
+            const energyChimicaKcal = energyMeccanicaKcal / 0.25;
+            const jumps25 = mealKcal / energyChimicaKcal;
 
-            potentialEnergyResultDiv.textContent = `${potentialEnergy.toFixed(2)} Joule`;
-            chemicalEnergyResultDiv.textContent = `${chemicalEnergyKcal.toFixed(2)} kcal`;
-            jumpsForPizzaResultDiv.textContent = `${Math.ceil(jumpsForPizza)}`;
-            jumpsForSolarEnergyResultDiv.textContent = `${Math.ceil(jumpsForSolarEnergy)}`;
+            // 4. Scenario Realissimo (Contando il Metabolismo Basale)
+            // Assumiamo Metabolismo Basale (MB) = 1 kcal per kg all'ora
+            const mbKcalPerSecondo = (weight * 1) / 3600;
+            // Assumiamo che tra preparazione e salto passino 4 secondi
+            const tempoPerSalto = 4; 
+            const mbPerSalto = mbKcalPerSecondo * tempoPerSalto;
+            
+            // Formula: MealKcal = NumeroSalti * (EnergiaChimicaSalto + MB_consumato_nel_tempo_del_salto)
+            const jumpsReal = mealKcal / (energyChimicaKcal + mbPerSalto);
 
-            const containerHeightPx = 250;
-            let barPositionPx = (height / maxVisualHeight) * containerHeightPx;
+            // Aggiorna UI
+            document.getElementById('jumps100').textContent = Math.round(jumps100).toLocaleString();
+            document.getElementById('jumps25').textContent = Math.round(jumps25).toLocaleString();
+            document.getElementById('jumpsReal').textContent = Math.round(jumpsReal).toLocaleString();
 
-            if (barPositionPx > containerHeightPx) {
-                barPositionPx = containerHeightPx;
-                showMessageBox(`L'altezza inserita (${height}m) supera la visualizzazione massima (2.0m) ma il calcolo è corretto.`);
-            }
-
-            highJumpBar.style.bottom = `${barPositionPx}px`;
-        });
-
-        closeMessageBoxBtn.addEventListener('click', hideMessageBox);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const initialHeight = parseFloat(heightInput.value);
-            const containerHeightPx = 250;
-            let barPositionPx = (initialHeight / maxVisualHeight) * containerHeightPx;
-
-            if (barPositionPx > containerHeightPx) {
-                barPositionPx = containerHeightPx;
-            }
-            highJumpBar.style.bottom = `${barPositionPx}px`;
+            // Animazione Barra (Max 2 metri)
+            const barPos = Math.min((height / 2) * 300, 300);
+            highJumpBar.style.bottom = barPos + 'px';
         });
     </script>
 </body>
